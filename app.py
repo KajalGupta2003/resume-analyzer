@@ -18,7 +18,7 @@ if st.button("Analyze"):
         score = final_score(skills, job_score)
 
         missing = get_missing_skills(skills)
-        suggestions = get_suggestions(text)
+        suggestions = get_suggestions(text, skills, score)
 
         st.subheader("📊 Results")
         st.write(f"Score: {score}/100")

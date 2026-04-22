@@ -5,7 +5,7 @@ def get_missing_skills(found_skills):
     return missing[:5]
 
 
-def get_suggestions(text):
+def get_suggestions(text, skills, score):
     suggestions = []
 
     text = text.lower()
@@ -18,5 +18,10 @@ def get_suggestions(text):
 
     if len(text.split()) < 300:
         suggestions.append("Increase resume content")
+    if len(skills) < 5:
+        suggestions.append("Add more technical skills")
+
+    if score < 60:
+        suggestions.append("Your resume needs improvement")
 
     return suggestions
