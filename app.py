@@ -1,7 +1,7 @@
 import streamlit as st
 from utils.parser import extract_text
 from utils.skills import extract_skills
-from utils.scorer import match_score, final_score
+from utils.scorer import  final_score, ml_match_score
 from utils.suggestions import get_missing_skills, get_suggestions
 
 st.title("📄 Resume Analyzer")
@@ -14,8 +14,9 @@ if st.button("Analyze"):
         text = extract_text(file)
 
         skills = extract_skills(text)
-        job_score = match_score(text, job_desc)
-        score = final_score(skills, job_score)
+        
+        job_score = ml_match_score(text, job_desc)
+        score = final_score(skills, job_score, text)
 
         missing = get_missing_skills(skills)
         suggestions = get_suggestions(text, skills, score)

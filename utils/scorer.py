@@ -1,19 +1,48 @@
-def match_score(resume_text, job_desc):
-    r = set(resume_text.lower().split())
-    j = set(job_desc.lower().split())
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
-    if len(j) == 0:
+
+# ✅ ML-based matching (TF-IDF)
+def ml_match_score(resume_text, job_desc):
+    if not job_desc.strip():
         return 0
 
-    match = r.intersection(j)
-    return round(len(match) / len(j) * 100, 2)
+    documents = [resume_text, job_desc]
+
+    tfidf = TfidfVectorizer(stop_words='english')
+    tfidf_matrix = tfidf.fit_transform(documents)
+
+    similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])
+
+    return round(similarity[0][0] * 100, 2)
 
 
-def final_score(skills, job_score):
+# ✅ Section-based scoring
+def section_score(text):
+    text = text.lower()
     score = 0
 
-    score += len(skills) * 5     # skills weight
-    score += job_score * 0.5     # job match weight
-    score += 20                  # base score
+    if "education" in text:
+        score += 10
+    if "project" in text:
+        score += 10
+    if "experience" in text:
+        score += 10
 
-    return min(score, 100)
+    return score
+
+
+# ✅ Final combined score
+def final_score(skills, job_score, text):
+    score = 0
+
+    # Skills (max ~30)
+    score += min(len(skills) * 5, 30)
+
+    # Job match (max 40)
+    score += job_score * 0.4
+
+    # Sections (max 30)
+    score += section_score(text)
+
+    return round(min(score, 100), 2)
